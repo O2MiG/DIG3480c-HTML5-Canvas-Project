@@ -42,14 +42,14 @@ function makeCircles(){
 }
 
 function Circle(x, y, color){
-	this.x = x;
-	this.y = y;
+	this.x = Math.floor(Math.random() * canvas.width);
+	this.y = Math.floor(Math.random() * canvas.height);
 	this.color = color;
 	this.dx = Math.random()*4-2;
 	this.dy = Math.random()*4-2;
 }
 
-function drawCircle(color, circle){
+function drawCircle(circle){
 	var radius = Math.floor(Math.random() * 40);
 	var x = Math.floor(Math.random() * canvas.width);
 	var y = Math.floor(Math.random() * canvas.height);
@@ -203,7 +203,7 @@ function init(){
 	//drawSemiCircle(canvas, context)
 	makeCircles();
 	
-	//timer = setInterval(drawCircle(canvas, context, color), 300);
+	timer = setInterval(resizeCanvas, 30);
 }
 
 window.onload = init;
