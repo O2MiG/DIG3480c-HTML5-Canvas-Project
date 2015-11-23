@@ -3,37 +3,22 @@
 <head>
 <title>HTML5 Canvas Project</title>
 <script>
-
 var canvas;
 var context;
 var timer;
 var time = ['day', 'night'];
 var timeOfDay = time[Math.floor(Math.random() * time.length)];
-
-var colors = ['white', 'yellow', 'blue', 'red', 'black', 'green'];
-var shapes = ['circle','square'];
+var colors = ['white', 'yellow', 'blue', 'red', 'black', 'green', 'DarkGray', 'Beige', 'CornflowerBlue', 'DarkCyan', 'SkyBlue', 'Tan', 'SandyBrown', 'SlateBlue', 'Green', 'Red'];
+var textChosen;
 var color;
-var shape = shapes[Math.floor(Math.random() * shapes.length)];
-
 var circles = [];
+var squares = [];
+
 
 function degreesToRadians(degrees){
 	return (degrees * Math.PI)/180;
 }
-
 // Shapes being drawn
-
-function growCircles(array){
-		for (var i = 0; i<circles.length; i++){
-			var circle = array[i];
-			if (circle.radius < 75){
-				circle.radius += 1;
-			} else{
-				array.splice(i, 1);
-				array.push(new Circle());
-			}
-		}
-}
 	
 function makeCircles(){
 		for(var i = 0; i < 10; i++){
@@ -42,37 +27,43 @@ function makeCircles(){
 }
 
 function Circle(x, y, color){
-	this.x = Math.floor(Math.random() * canvas.width);
-	this.y = Math.floor(Math.random() * canvas.height);
+	this.x = x;
+	this.y = y;
 	this.color = color;
 	this.dx = Math.random()*4-2;
 	this.dy = Math.random()*4-2;
 }
-
 function drawCircle(circle){
-	var radius = Math.floor(Math.random() * 40);
+	context.beginPath();
+	context.arc(circle.x, circle.y, 30, 0, degreesToRadians(360), true);
+	context.fillStyle = circle.color;
+	context.fill();
+	
+  if (circle.x + circle.dx > canvas.width || circle.x + circle.dx < 0)
+    circle.dx = -circle.dx;
+  if (circle.y + circle.dy > canvas.height || circle.y + circle.dy < 0)
+    circle.dy = -circle.dy;
+  circle.x += circle.dx;
+  circle.y += circle.dy;
+}
+
+
+function drawSquares(){
+	
 	var x = Math.floor(Math.random() * canvas.width);
 	var y = Math.floor(Math.random() * canvas.height);
+	var width = Math.floor(Math.random() * 40);
 	
-	var Circle = circle;
+	for(var i = 0; i < 10; i++){
 	
-	Circle.color = Math.floor(Math.random() * colors.length);
-		
-		context.beginPath();
-		context.arc(x, y, radius, 0, degreesToRadians(360), true);
-		context.fillStyle = color;
-		context.fill();
-		
-		if (Circle.x + Circle.dx > canvas.width || Circle.x + Circle.dx < 0)
-			Circle.dx = -Circle.dx;
-		if (Circle.y + Circle.dy > canvas.height || Circle.y + Circle.dy < 0)
-			Circle.dy = -Circle.dy;
-		Circle.x += Circle.dx;
-		Circle.y += Circle.dy;
+	context.beginPath();
+    context.rect(x, y, width, width);
+	context.fillStyle =  colors[Math.floor(Math.random() * colors.length)];
+	context.fillRect(x, y, width, width);
+	}
 }
 
 function drawSemiCircle(canvas, context) {
-
       context.beginPath();
       context.arc(288, 75, 70, 0, Math.PI, false);
       context.closePath();
@@ -82,9 +73,7 @@ function drawSemiCircle(canvas, context) {
       context.strokeStyle = '#550000';
       context.stroke();
 }
-
 function drawTriangle(canvas, context) {
-
     context.beginPath();
     context.moveTo(75,50);
     context.lineTo(100,75);
@@ -92,7 +81,6 @@ function drawTriangle(canvas, context) {
 	context.fillStyle = 'white';
     context.fill();
   }
-
 function drawCloud(canvas, context) {
       // begin custom shape
       context.beginPath();
@@ -103,7 +91,6 @@ function drawCloud(canvas, context) {
       context.bezierCurveTo(430, 40, 370, 30, 340, 50);
       context.bezierCurveTo(320, 5, 250, 20, 250, 50);
       context.bezierCurveTo(200, 5, 150, 20, 170, 80);
-
       // complete custom shape
       context.closePath();
       context.lineWidth = 5;
@@ -112,28 +99,26 @@ function drawCloud(canvas, context) {
       context.strokeStyle = 'blue';
       context.stroke();
 }
-
 function makeText() {
 		
 		var text = [['First there was day...', 'Days like this...', 'Good morning', 'Hello...'],
 		['...and then there was night', 'Nights like this...', '...Good night', 'Bye...']];
 		
 		if (timeOfDay == 'day'){
-			text = text[0][Math.floor(Math.random() * text[0].length)];
-			
-		context.fillStyle = 'black';
-		context.font = 'bold 1.5em sans-serif';
-		context.textAlign = 'right';
-		context.fillText(text, canvas.width-100, canvas.height-40);
+			textChosen = text[0][Math.floor(Math.random() * text[0].length)];
 		}
 		else if (timeOfDay == 'night'){
-			text = text[1][Math.floor(Math.random() * text[1].length)];
+			textChosen = text[1][Math.floor(Math.random() * text[1].length)];
+		}
+		
+}
+
+function drawText() {
 			
 			context.fillStyle = 'white';
 			context.font = 'bold 1.5em sans-serif';
 			context.textAlign = 'right';
-			context.fillText(text, canvas.width-100, canvas.height-40);
-		}
+			context.fillText(textChosen, canvas.width-100, canvas.height-240);
 }
 
 function fillBackgroundColor() {
@@ -142,9 +127,7 @@ function fillBackgroundColor() {
 }
 
 function fillBackgroundNight() {
-
 	  context.rect(0, 0, canvas.width, canvas.height);
-
 	  var gradient = context.createLinearGradient(0, 0, 0, canvas.height);
       // black
       gradient.addColorStop(.25, '#080808');   
@@ -153,11 +136,8 @@ function fillBackgroundNight() {
       context.fillStyle = gradient;
       context.fill();
 }
-
 function fillBackgroundDay() {
-
 	  context.rect(0, 0, canvas.width, canvas.height);
-
 	  var gradient = context.createLinearGradient(0, 0, 0, canvas.height);
       // light blue
       gradient.addColorStop(.25, '#8ED6FF');   
@@ -166,7 +146,6 @@ function fillBackgroundDay() {
       context.fillStyle = gradient;
       context.fill();
 }
-
 function resizeCanvas(){
 	canvas.width = window.innerWidth - 20;
 	canvas.height = window.innerHeight - 20;
@@ -181,15 +160,17 @@ function resizeCanvas(){
 	//drawCloud(canvas, context);
 	//drawSemiCircle(canvas, context)
 	//drawCircle(canvas, context, color);
-	makeText();
-	
-	makeCircles();
+	drawText();
+	drawSquares();
+	//makeCircles();
 	
 	for(var i = 0; i < circles.length; i++){
 		drawCircle(circles[i]);
+	for(var i = 0; i < squares.length; i++){
+		drawSquare(squares[i]);
 	}
 }
-
+}
 function init(){
 	canvas = document.getElementById('canvas');
 	context = canvas.getContext('2d');
@@ -197,17 +178,16 @@ function init(){
 	window.addEventListener('resize', resizeCanvas, false);
 	window.addEventListener('orientationchange', resizeCanvas, false);
 	resizeCanvas();
+	makeText();
 	
 	//drawTriangle(canvas, context);
 	//drawCloud(canvas, context);
 	//drawSemiCircle(canvas, context)
-	makeCircles();
+	//makeCircles();
 	
 	timer = setInterval(resizeCanvas, 30);
 }
-
 window.onload = init;
-
 </script>
 </head>
 <body>
