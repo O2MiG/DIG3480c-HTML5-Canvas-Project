@@ -15,25 +15,16 @@ var shapes = ['circle','square'];
 var color;
 var shape = shapes[Math.floor(Math.random() * shapes.length)];
 
+var textChosen;
+
 var circles = [];
+var squares = [];
 
 function degreesToRadians(degrees){
 	return (degrees * Math.PI)/180;
 }
 
 // Shapes being drawn
-
-function growCircles(array){
-		for (var i = 0; i<circles.length; i++){
-			var circle = array[i];
-			if (circle.radius < 75){
-				circle.radius += 1;
-			} else{
-				array.splice(i, 1);
-				array.push(new Circle());
-			}
-		}
-}
 	
 function makeCircles(){
 		for(var i = 0; i < 10; i++){
@@ -44,23 +35,21 @@ function makeCircles(){
 function Circle(x, y, color){
 	this.x = Math.floor(Math.random() * canvas.width);
 	this.y = Math.floor(Math.random() * canvas.height);
-	this.color = color;
+	this.color = colors[Math.floor(Math.random() * colors.length)];
 	this.dx = Math.random()*4-2;
 	this.dy = Math.random()*4-2;
 }
 
 function drawCircle(circle){
-	var radius = Math.floor(Math.random() * 40);
-	var x = Math.floor(Math.random() * canvas.width);
-	var y = Math.floor(Math.random() * canvas.height);
+	//var radius = Math.floor(Math.random() * 20);
+	//var x = Math.floor(Math.random() * canvas.width);
+	//var y = Math.floor(Math.random() * canvas.height);
 	
 	var Circle = circle;
-	
-	Circle.color = Math.floor(Math.random() * colors.length);
 		
 		context.beginPath();
 		context.arc(x, y, radius, 0, degreesToRadians(360), true);
-		context.fillStyle = color;
+		context.fillStyle = Circle.color;
 		context.fill();
 		
 		if (Circle.x + Circle.dx > canvas.width || Circle.x + Circle.dx < 0)
@@ -81,6 +70,29 @@ function drawSemiCircle(canvas, context) {
       context.fill();
       context.strokeStyle = '#550000';
       context.stroke();
+}
+
+function makeSquares(){
+		for(var i = 0; i < 10; i++){
+			squares.push(new Square());
+		}
+}
+		
+function Square(){
+	this.x = Math.floor(Math.random() * canvas.width);
+	this.y = Math.floor(Math.random() * canvas.height);
+	this.width = Math.floor(Math.random() * 40);
+	this.color = colors[Math.floor(Math.random() * colors.length)];
+	this.dx = Math.random()*4-2;
+	this.dy = Math.random()*4-2;
+}
+
+function drawSquare(square){
+
+	var Square = square;
+
+	context.fillStyle = Square.color;
+	context.fillRect(Square.x, Square.y, Square.width, Square.width);
 }
 
 function drawTriangle(canvas, context) {
@@ -119,21 +131,20 @@ function makeText() {
 		['...and then there was night', 'Nights like this...', '...Good night', 'Bye...']];
 		
 		if (timeOfDay == 'day'){
-			text = text[0][Math.floor(Math.random() * text[0].length)];
-			
-		context.fillStyle = 'black';
-		context.font = 'bold 1.5em sans-serif';
-		context.textAlign = 'right';
-		context.fillText(text, canvas.width-100, canvas.height-40);
+			textChosen = text[0][Math.floor(Math.random() * text[0].length)];
 		}
 		else if (timeOfDay == 'night'){
-			text = text[1][Math.floor(Math.random() * text[1].length)];
+			textChosen = text[1][Math.floor(Math.random() * text[1].length)];
+		}
+		
+}
+
+function drawText() {
 			
 			context.fillStyle = 'white';
 			context.font = 'bold 1.5em sans-serif';
 			context.textAlign = 'right';
-			context.fillText(text, canvas.width-100, canvas.height-40);
-		}
+			context.fillText(textChosen, canvas.width-100, canvas.height-240);
 }
 
 function fillBackgroundColor() {
@@ -181,9 +192,8 @@ function resizeCanvas(){
 	//drawCloud(canvas, context);
 	//drawSemiCircle(canvas, context)
 	//drawCircle(canvas, context, color);
-	makeText();
-	
-	makeCircles();
+	drawText();
+	drawSquare();
 	
 	for(var i = 0; i < circles.length; i++){
 		drawCircle(circles[i]);
@@ -201,7 +211,8 @@ function init(){
 	//drawTriangle(canvas, context);
 	//drawCloud(canvas, context);
 	//drawSemiCircle(canvas, context)
-	makeCircles();
+	makeText();
+	//makeCircles();
 	
 	timer = setInterval(resizeCanvas, 30);
 }
