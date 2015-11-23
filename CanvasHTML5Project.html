@@ -1,216 +1,115 @@
 <!doctype html>
 <html>
+
 <head>
-<title>HTML5 Canvas Project</title>
+<title>Abstract Art Generator</title>
+
+<style>
+body {
+	font-family: Verdana, Helvetica, sans-serif;
+}
+canvas {
+	border: 1px solid black;
+}
+</style>
+
 <script>
 
-var canvas;
-var context;
-var timer;
-var time = ['day', 'night'];
-var timeOfDay = time[Math.floor(Math.random() * time.length)];
+function makeTitle(){
+	var lines = [
+		['Meditative', 'Objective', 'Reflective'],
+		['Ellipses', 'Transformation', 'State', 'Emotion', 'Composition'],
+		['I','II','III','IV','V']	
+	];
+	var title = '';
+	
+	for(var i = 0; i < lines.length; i++){
+		var random = Math.floor(Math.random() * lines[i].length);
+		title += lines[i][random] + ' ';
+	};
+	return(title);
+}
 
-var colors = ['white', 'yellow', 'blue', 'red', 'black', 'green'];
-var shapes = ['circle','square'];
-var color;
-var shape = shapes[Math.floor(Math.random() * shapes.length)];
+function artHandler(){
+	var title = makeTitle();
+	
+	var canvas = document.getElementById('artCanvas');
+	var context = canvas.getContext('2d');
+	
+	
+	fillBackgroundColor(canvas, context);
+	
+	var colors = ['white', 'yellow', 'blue', 'red', 'black', 'green'];
+	var shapes = ['circle','square'];
+	
+	for(var i=0; i < 20; i++){
+		var color = colors[Math.floor(Math.random() * colors.length)];
+		var shape = shapes[Math.floor(Math.random() * shapes.length)];
+		
+		if (shape == 'circle'){
+			drawCircle(canvas, context, color);
+		}
+		else if (shape == 'square'){
+			drawSquare(canvas, context, color);
+		}
+	}
+	drawText(canvas, context, title);
+}
 
-var circles = [];
+function fillBackgroundColor(canvas, context){
+	var colors = ['white', 'yellow', 'blue', 'red'];
+	var bgColor = colors[Math.floor(Math.random() * colors.length)];
+	context.fillStyle = bgColor;
+	context.fillRect(0, 0, canvas.width, canvas.height);
+}
 
 function degreesToRadians(degrees){
-	return (degrees * Math.PI)/180;
+	return(degrees * Math.PI)/180;
 }
 
-// Shapes being drawn
-
-function growCircles(array){
-		for (var i = 0; i<circles.length; i++){
-			var circle = array[i];
-			if (circle.radius < 75){
-				circle.radius += 1;
-			} else{
-				array.splice(i, 1);
-				array.push(new Circle());
-			}
-		}
-}
-	
-function makeCircles(){
-		for(var i = 0; i < 10; i++){
-			circles.push(new Circle());
-		}
-}
-
-function Circle(x, y, color){
-	this.x = Math.floor(Math.random() * canvas.width);
-	this.y = Math.floor(Math.random() * canvas.height);
-	this.color = color;
-	this.dx = Math.random()*4-2;
-	this.dy = Math.random()*4-2;
-}
-
-function drawCircle(circle){
+function drawCircle(canvas, context, color){
 	var radius = Math.floor(Math.random() * 40);
 	var x = Math.floor(Math.random() * canvas.width);
 	var y = Math.floor(Math.random() * canvas.height);
 	
-	var Circle = circle;
+	context.beginPath();
+	context.arc(x, y, radius, 0, degreesToRadians(360), true);
+	context.fillStyle = color;
+	context.fill();
+}
+
+function drawSquare(canvas, context, color){
 	
-	Circle.color = Math.floor(Math.random() * colors.length);
-		
-		context.beginPath();
-		context.arc(x, y, radius, 0, degreesToRadians(360), true);
-		context.fillStyle = color;
-		context.fill();
-		
-		if (Circle.x + Circle.dx > canvas.width || Circle.x + Circle.dx < 0)
-			Circle.dx = -Circle.dx;
-		if (Circle.y + Circle.dy > canvas.height || Circle.y + Circle.dy < 0)
-			Circle.dy = -Circle.dy;
-		Circle.x += Circle.dx;
-		Circle.y += Circle.dy;
+	var x = Math.floor(Math.random() * canvas.width);
+	var y = Math.floor(Math.random() * canvas.height);
+	var width = Math.floor(Math.random() * 40);
+	context.fillStyle = color;
+	context.fillRect(x, y, width, width);
 }
 
-function drawSemiCircle(canvas, context) {
-
-      context.beginPath();
-      context.arc(288, 75, 70, 0, Math.PI, false);
-      context.closePath();
-      context.lineWidth = 5;
-      context.fillStyle = 'red';
-      context.fill();
-      context.strokeStyle = '#550000';
-      context.stroke();
-}
-
-function drawTriangle(canvas, context) {
-
-    context.beginPath();
-    context.moveTo(75,50);
-    context.lineTo(100,75);
-    context.lineTo(100,25);
-	context.fillStyle = 'white';
-    context.fill();
-  }
-
-function drawCloud(canvas, context) {
-      // begin custom shape
-      context.beginPath();
-      context.moveTo(170, 80);
-      context.bezierCurveTo(130, 100, 130, 150, 230, 150);
-      context.bezierCurveTo(250, 180, 320, 180, 340, 150);
-      context.bezierCurveTo(420, 150, 420, 120, 390, 100);
-      context.bezierCurveTo(430, 40, 370, 30, 340, 50);
-      context.bezierCurveTo(320, 5, 250, 20, 250, 50);
-      context.bezierCurveTo(200, 5, 150, 20, 170, 80);
-
-      // complete custom shape
-      context.closePath();
-      context.lineWidth = 5;
-	  context.fillStyle = 'white';
-	  context.fill();
-      context.strokeStyle = 'blue';
-      context.stroke();
-}
-
-function makeText() {
-		
-		var text = [['First there was day...', 'Days like this...', 'Good morning', 'Hello...'],
-		['...and then there was night', 'Nights like this...', '...Good night', 'Bye...']];
-		
-		if (timeOfDay == 'day'){
-			text = text[0][Math.floor(Math.random() * text[0].length)];
-			
-		context.fillStyle = 'black';
-		context.font = 'bold 1.5em sans-serif';
-		context.textAlign = 'right';
-		context.fillText(text, canvas.width-100, canvas.height-40);
-		}
-		else if (timeOfDay == 'night'){
-			text = text[1][Math.floor(Math.random() * text[1].length)];
-			
-			context.fillStyle = 'white';
-			context.font = 'bold 1.5em sans-serif';
-			context.textAlign = 'right';
-			context.fillText(text, canvas.width-100, canvas.height-40);
-		}
-}
-
-function fillBackgroundColor() {
+function drawText(canvas, context, title){
 	context.fillStyle = 'black';
-	context.fillRect(0, 0 , canvas.width, canvas.height); 
+	context.font = 'bold 1em sans-serif';
+	context.textAlign = 'right';
+	context.fillText(title, canvas.width-20, canvas.height-40);
 }
 
-function fillBackgroundNight() {
 
-	  context.rect(0, 0, canvas.width, canvas.height);
-
-	  var gradient = context.createLinearGradient(0, 0, 0, canvas.height);
-      // black
-      gradient.addColorStop(.25, '#080808');   
-      // darker blue
-      gradient.addColorStop(1, '#330099');
-      context.fillStyle = gradient;
-      context.fill();
+window.onload = function(){
+	var button = document.getElementById('artButton');
+	button.onclick = artHandler;
 }
-
-function fillBackgroundDay() {
-
-	  context.rect(0, 0, canvas.width, canvas.height);
-
-	  var gradient = context.createLinearGradient(0, 0, 0, canvas.height);
-      // light blue
-      gradient.addColorStop(.25, '#8ED6FF');   
-      // dark blue
-      gradient.addColorStop(1, '#004CB3');
-      context.fillStyle = gradient;
-      context.fill();
-}
-
-function resizeCanvas(){
-	canvas.width = window.innerWidth - 20;
-	canvas.height = window.innerHeight - 20;
-	
-	if (timeOfDay == 'day'){
-			fillBackgroundDay();
-	}		
-	else if (timeOfDay == 'night'){
-		fillBackgroundNight();
-	}
-	//drawTriangle(canvas, context);
-	//drawCloud(canvas, context);
-	//drawSemiCircle(canvas, context)
-	//drawCircle(canvas, context, color);
-	makeText();
-	
-	makeCircles();
-	
-	for(var i = 0; i < circles.length; i++){
-		drawCircle(circles[i]);
-	}
-}
-
-function init(){
-	canvas = document.getElementById('canvas');
-	context = canvas.getContext('2d');
-	
-	window.addEventListener('resize', resizeCanvas, false);
-	window.addEventListener('orientationchange', resizeCanvas, false);
-	resizeCanvas();
-	
-	//drawTriangle(canvas, context);
-	//drawCloud(canvas, context);
-	//drawSemiCircle(canvas, context)
-	makeCircles();
-	
-	timer = setInterval(resizeCanvas, 30);
-}
-
-window.onload = init;
 
 </script>
+
 </head>
+
 <body>
-<canvas id='canvas' width=500 height=500></canvas>
+<h1>Abstract Art:</h1>
+<canvas width='600' height='200' id='artCanvas'></canvas>
+<form>
+<input type='button' id='artButton' value='New Masterpiece'>
+</form>
 </body>
+
 </html>
