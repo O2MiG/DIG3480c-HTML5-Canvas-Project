@@ -68,9 +68,9 @@ function drawSemiCircle(canvas, context) {
       context.arc(288, 75, 70, 0, Math.PI, false);
       context.closePath();
       context.lineWidth = 5;
-      context.fillStyle = 'red';
+      context.fillStyle = colors[Math.floor(Math.random() * colors.length)];;
       context.fill();
-      context.strokeStyle = '#550000';
+      context.strokeStyle =colors[Math.floor(Math.random() * colors.length)];;
       context.stroke();
 }
 function drawTriangle(canvas, context) {
@@ -96,7 +96,7 @@ function drawCloud(canvas, context) {
       context.lineWidth = 5;
 	  context.fillStyle = 'white';
 	  context.fill();
-      context.strokeStyle = 'blue';
+      context.strokeStyle = colors[Math.floor(Math.random() * colors.length)];;
       context.stroke();
 }
 function makeText() {
@@ -156,10 +156,10 @@ function resizeCanvas(){
 	else if (timeOfDay == 'night'){
 		fillBackgroundNight();
 	}
-	//drawTriangle(canvas, context);
-	//drawCloud(canvas, context);
-	//drawSemiCircle(canvas, context)
-	//drawCircle(canvas, context, color);
+	drawTriangle(canvas, context);
+	drawCloud(canvas, context);
+	drawSemiCircle(canvas, context)
+	drawCircle(canvas, context, color);
 	drawText();
 	drawSquares();
 	//makeCircles();
