@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-<title>My Project</title>
+<title>HTML5 Canvas Project</title>
 <script>
 
 var canvas;
@@ -54,21 +54,21 @@ function drawCircle(circle){
 	var x = Math.floor(Math.random() * canvas.width);
 	var y = Math.floor(Math.random() * canvas.height);
 	
+	var Circle = circle;
 	
-	
-		color = colors[Math.floor(Math.random() * colors.length)];
+	Circle.color = Math.floor(Math.random() * colors.length);
 		
 		context.beginPath();
 		context.arc(x, y, radius, 0, degreesToRadians(360), true);
 		context.fillStyle = color;
 		context.fill();
 		
-		if (circle.x + circle.dx > canvas.width || circle.x + circle.dx < 0)
-			circle.dx = -circle.dx;
-		if (circle.y + circle.dy > canvas.height || circle.y + circle.dy < 0)
-			circle.dy = -circle.dy;
-		circle.x += circle.dx;
-		circle.y += circle.dy;
+		if (Circle.x + Circle.dx > canvas.width || Circle.x + Circle.dx < 0)
+			Circle.dx = -Circle.dx;
+		if (Circle.y + Circle.dy > canvas.height || Circle.y + Circle.dy < 0)
+			Circle.dy = -Circle.dy;
+		Circle.x += Circle.dx;
+		Circle.y += Circle.dy;
 }
 
 function drawSemiCircle(canvas, context) {
@@ -183,7 +183,7 @@ function resizeCanvas(){
 	//drawCircle(canvas, context, color);
 	makeText();
 	
-	growCircles(circles);
+	makeCircles();
 	
 	for(var i = 0; i < circles.length; i++){
 		drawCircle(circles[i]);
